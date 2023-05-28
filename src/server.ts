@@ -33,8 +33,7 @@ app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);
 });
 
+
 for (const route of routes) {
   app.use(route.path, route.router);
 }
-// console.log(routes);
-// const routes = [{ path: "/api/user", router: "t" }];
