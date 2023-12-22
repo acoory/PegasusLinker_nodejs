@@ -1,39 +1,50 @@
 import * as express from "express";
 import * as dotenv from "dotenv";
 import * as bodyParser from "body-parser";
+
 const { routes } = require("./router");
+import Database from "./config/database";
 
-const app = express();
+class MyExpressApp {
+  private app: express.Application;
+  private Database: Database;
 
-const env: dotenv.DotenvParseOutput = dotenv.config().parsed;
+  constructor() {
+    this.app = express();
+    this.setup();
+    this.Database = new Database();
+  }
 
-const port = env.SERVER_PORT || 3000;
+  private setup(): void {
+    const env: dotenv.DotenvParseOutput = dotenv.config().parsed;
+    const port = env.SERVER_PORT || 3000;
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", `${env.CLIENT_URL}`);
+    this.app.use((req, res, next) => {
+      res.setHeader("Access-Control-Allow-Origin", `${env.CLIENT_URL}`);
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization",
+      );
+      res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      );
+      res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+      next();
+    });
 
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  // éviter les erreurs par rapport à helmet, quand les ressources ne sont pas de la même origine
-  res.setHeader("Cross-Origin-Resource-Policy", "same-site");
-  next();
-});
+    this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(express.json());
 
-app.use(bodyParser.urlencoded({ extended: true }));
+    for (const route of routes) {
+      this.app.use(route.path, route.router);
+    }
 
-app.use(express.json());
-
-app.listen(port, () => {
-  console.log(`Server started at http://localhost:${port}`);
-});
-
-
-for (const route of routes) {
-  app.use(route.path, route.router);
+    this.app.listen(port, () => {
+      console.log(`Server started at http://localhost:${port}`);
+    });
+  }
 }
+
+// Créer une instance de la classe
+const myExpressApp = new MyExpressApp();
