@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   mysql:
     image: mysql:latest
@@ -7,12 +5,18 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      MYSQL_DATABASE: $DB_NAME
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - mysql-phpmyadmin
+      - mysql
 
   phpmyadmin:
+    platform: linux/x86_64
+    depends_on:
+      - mysql
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin
     restart: always
@@ -22,7 +26,29 @@ services:
       - .env
     environment:
       PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+    networks:
+      - mysql-phpmyadmin
+
+  nodejs:
+    image: node:latest
+    container_name: nodejs
+    build: .
+    depends_on:
+      - mysql
+    restart: always
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules/
+    working_dir: /usr/src/app
+    networks:
+      - mysql
+
+networks:
+  mysql-phpmyadmin:
+    driver: bridge
+  mysql:
+    driver: bridge
 
 volumes:
   db_data:
