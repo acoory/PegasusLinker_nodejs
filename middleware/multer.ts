@@ -1,7 +1,7 @@
 import sharp = require("sharp");
 import {Request, Response} from "express";
 
-const multer = require("multer");
+const multer = require("middleware/multer");
 
 const MIME_TYPES = {
     "image/jpg": "jpg",

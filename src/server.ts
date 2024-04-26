@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 import * as bodyParser from "body-parser";
 
 const { routes } = require("./router");
-import Database from "./config/database";
+import Database from "../config/database";
 
 class MyExpressApp {
   private app: express.Application;
