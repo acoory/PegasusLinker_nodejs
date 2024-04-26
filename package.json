@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "preinstall": "npm install -g nodemon && npm install -g ts-node",
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon -L src/server.ts",
     "build": "tsc"
   },
   "author": "Lhony",
