@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as dotenv from "dotenv";
 import * as bodyParser from "body-parser";
+const PORT = process.env.PORT || 3000;
 
 const { routes } = require("./router");
 import Database from "../config/database";
@@ -12,7 +13,7 @@ class MyExpressApp {
   constructor() {
     this.app = express();
     this.setup();
-    this.Database = new Database();
+    // this.Database = new Database();
   }
 
   private setup(): void {
@@ -40,8 +41,8 @@ class MyExpressApp {
       this.app.use(route.path, route.router);
     }
 
-    this.app.listen(port, () => {
-      console.log(`Server started at http://localhost:${port}`);
+    this.app.listen(PORT, () => {
+      console.log(`Server started at http://localhost:${PORT}`);
     });
   }
 }
