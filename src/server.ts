@@ -13,7 +13,7 @@ class MyExpressApp {
   constructor() {
     this.app = express();
     this.setup();
-    // this.Database = new Database();
+    this.Database = new Database();
   }
 
   private setup(): void {
